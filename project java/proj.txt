@@ -1,0 +1,427 @@
+package JDBCPACK;
+
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+
+import javax.print.attribute.standard.Severity;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+public class data {
+	
+	ArrayList BillItem = new ArrayList();
+	ArrayList BillItem1 = new ArrayList();
+	ArrayList BillItem2 = new ArrayList();
+	ArrayList BillItem3 = new ArrayList();
+	
+	String USER = "root";
+	String PASS = "";
+	String DB_URL = "jdbc:mysql://localhost/restaurant";
+	
+	Connection conn ;
+	Statement stmt;
+	ResultSet rs;
+	double Total;
+	
+	private final static double TAX_RATE = 0.05;   
+	
+	JLabel  jlab;
+	JLabel jlab1;
+	JLabel jlab2;
+	JLabel jlab3;
+	JLabel jlab4;
+	JLabel jlab5;
+	JLabel jlab6;
+	JLabel jlab7;
+	JLabel jlab8;
+	JLabel jlab9;
+	JLabel jlab10;
+	JLabel jlab11;
+	JLabel jlab12;
+	
+	JTextField jtf1;
+	JTextField jtf9;
+	JTextField jtf10;
+	JTextField jtf11;
+	
+	JComboBox jcom;
+	JComboBox jcb;
+	JComboBox jcb1;
+	JComboBox jcb2;
+	JComboBox jcb3;
+	
+	JButton jbn;
+	JButton jbn1;
+	JButton jbn2;
+	
+	JPanel jpan;
+	JPanel jpan1;
+	
+	 public data() throws SQLException{
+		 
+	try {
+		Class.forName("com.mysql.jdbc.Driver");
+		
+		
+			conn = DriverManager.getConnection(DB_URL,USER,PASS);
+		    stmt = conn.createStatement();
+            String sql = "SELECT * FROM menu";
+		 rs= stmt.executeQuery(sql);
+//		 while(rs.next()){
+//			 int itemID = rs.getInt("itemID");
+//		       String name = rs.getString("name");
+//		       String category = rs.getString("category");
+//		       int price = rs.getInt("price");
+//		      
+//		       //Display values
+//		      
+//		       System.out.print(" itemID: " + itemID);
+//		       System.out.print(", name: " + name);
+//		       System.out.print(", category: " + category);
+//		       System.out.println(", price: " + price);
+//		 }
+	} catch (Exception e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	
+		JFrame frame = new JFrame();
+	    frame.setVisible(true);
+	    frame.setSize(600, 600);
+	
+	    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+	    
+	    frame.setLayout(null);
+	    jlab = new JLabel("Restaurant");
+	    jlab.setBounds(250, 2, 250, 90);
+	    frame.add(jlab);
+	    
+	    jlab1 = new JLabel("Waiter Information");
+	    jlab1.setBounds(100, 60, 200, 55);
+	    frame.add(jlab1);
+	    
+	    jlab2 = new JLabel("Table Number");
+	    jlab2.setBounds(130, 100, 200, 55);
+	    frame.add(jlab2);
+	    
+	    jlab3 = new JLabel("Waiter Name");
+	    jlab3.setBounds(130, 130, 200, 55);
+	    frame.add(jlab3);
+	    
+	    
+	    String[]TableNo = {"1","2","3","4","5","6","7","8","9","10"};
+	     jcom = new JComboBox(TableNo);
+	     jcom.setBounds(370, 110, 50, 25);
+	     frame.add(jcom);
+	    
+	    jtf1 = new JTextField();
+	    jtf1.setBounds(350, 150, 100, 25);
+	    frame.add(jtf1);
+	    
+	    JPanel jpan = new JPanel();
+		jpan.setBounds(40, 60, 450, 150);
+		jpan.setBackground(Color.cyan);
+		frame.add(jpan);
+		
+		
+		jlab4 = new JLabel("Menu Items");
+		jlab4.setBounds(100, 220, 200,60);
+		frame.add(jlab4);
+		
+	    jlab5 = new JLabel("Beverage");
+		jlab5.setBounds(120, 260, 200, 60);
+		frame.add(jlab5);
+		
+	    jlab6 = new JLabel("Appetizer");
+		jlab6.setBounds(120, 290, 200, 60);
+		frame.add(jlab6);
+		
+	    jlab7 = new JLabel("Main Course");
+	    jlab7.setBounds(120, 320, 200, 60);
+	    frame.add(jlab7);
+	    
+	    jlab8 = new JLabel("Dessert");
+	    jlab8.setBounds(120, 350, 200, 60);
+	    frame.add(jlab8);
+	    
+	   // String[] MenuArray = {"Minerals","Tea","Coffee","Tea","Mineral Water","Fruit Juice","Milk"};
+	     jcb = new JComboBox<String>();
+	     jcb.setBounds(350, 280, 130, 25);
+	     
+		    	 
+	     jcb.addItemListener(new ItemListener(){
+
+				@Override
+				public void itemStateChanged(ItemEvent event) {
+					// TODO Auto-generated method stub
+					BeverageJComboBoxItemStateChanged( event );
+				}
+		    	 
+		     });
+	     
+	     frame.add(jcb);
+	      
+	    	 loadcategory("Beverage",jcb);
+		    
+		    
+	     
+	     
+	    // String[]MenuArray1 = {"Buffalo Wings","Pate and Toast","Potato Skins","Samosa","Chaat"};
+	     jcb1 = new JComboBox<String>();
+	     jcb1.setBounds(350, 310, 130, 25);
+	     jcb1.addItemListener(new ItemListener(){
+
+				@Override
+				public void itemStateChanged(ItemEvent event) {
+					// TODO Auto-generated method stub
+					AppetizerJComboBoxItemStateChanged( event );
+				}
+		    	 
+		     });
+		     
+	     frame.add(jcb1);
+	     
+	     loadcategory("Appetizer",jcb1);
+		    
+	     
+	    // String[]MenuArray2 = {"Prime Rib","Seafood Alfredo","Kadai Paneer","Saag Makhni","Dall Fry"};
+	     jcb2 = new JComboBox<String>();
+	     jcb2.setBounds(350, 340, 130, 25);
+	     
+	     jcb2.addItemListener(new ItemListener(){
+
+			@Override
+			public void itemStateChanged(ItemEvent event) {
+				// TODO Auto-generated method stub
+				 MainCourseJComboBoxItemStateChanged( event );
+			}
+	    	 
+	     });
+	     
+	     frame.add(jcb2);
+	     
+	     loadcategory("Main Course",jcb2);
+	     
+	  
+		    
+	    // String[]MenuArray3 = {"Sundae","Apple Pie","Carrot Cake","Gulab Jamun","GajarPaak","Apple Crisp","Mud Pie"};
+	     jcb3 = new JComboBox();
+	     jcb3.setBounds(350, 370, 130, 25);
+	     
+	  // For listening to the changes of the selected items in the combo box
+	  // we need to add an ItemListener to the combo box component as shown
+	  // below.
+	     jcb3.addItemListener(new ItemListener(){
+	    	 
+	    	 public void itemStateChanged(ItemEvent event) {
+	    		 
+	    		 DessertJComboBoxItemStateChanged( event );
+	    		  // jcb3.getSelectedItem();
+	                //JComboBox jcb3 = (JComboBox) event.getSource();
+	                //Object item = event.getItem();
+	                System.out.println("Item: " + event.getItem());
+	    		 }
+	     });
+	     
+	     frame.add(jcb3);
+	     
+	     loadcategory("Dessert",jcb3);
+		    
+	    
+	     
+	     jpan1 = new JPanel();
+	     jpan1.setBounds(40, 230, 450, 170);
+	     jpan1.setBackground(Color.cyan);
+	     frame.add(jpan1);
+      	    
+	    
+		 
+		 jlab10 = new JLabel("Subtotal:");
+		 jlab10.setBounds(50, 440, 200, 60);
+		 frame.add(jlab10);
+		 
+		 jlab11 = new JLabel("Tax");
+		 jlab11.setBounds(50, 470, 200, 60);
+		 frame.add(jlab11);
+		 
+		 jlab12 = new JLabel("Total");
+		 jlab12.setBounds(50, 500, 200, 60);
+		 frame.add(jlab12);
+		 
+		 jtf9 = new JTextField();
+		 jtf9.setBounds(170, 460, 100, 25);
+		 frame.add(jtf9);
+		 
+		 jtf10 = new JTextField();
+		 jtf10.setBounds(170, 490, 100, 25);
+		 frame.add(jtf10);
+		 
+		 jtf11 = new JTextField();
+		 jtf11.setBounds(170, 520, 100, 25);
+		 frame.add(jtf11);
+		 
+		 jbn = new JButton("Save Table");
+		 jbn.setBounds(290, 460, 120, 25);
+		 frame.add(jbn);
+		 
+		 jbn1 = new JButton("Calculate Bill");
+		 jbn1.setBounds(290, 490, 120, 25);
+		 jbn1.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				float num1, num2, result;
+			    // We have to parse the text to a type float.
+		    num1 = Float.parseFloat(jtf9.getText());
+		    num2 = Float.parseFloat(jtf10.getText());
+			    // Now we can perform the addition.
+		    result = num1+num2;
+			    // We will now pass the value of result to jTextField3.
+			    // At the same time, we are going to 
+			    // change the value of result from a float to a string.
+			   jtf11.setText(String.valueOf(result));
+			}	 
+		 });
+		 frame.add(jbn1);
+		 
+		 
+		 
+		 
+		 jbn2 = new JButton("Pay Bill");
+		 jbn2.setBounds(290, 520, 120, 25);
+		 frame.add(jbn2);
+		 
+		    
+	}
+
+	
+	public void loadcategory ( String category,JComboBox comb) {
+		System.out.println("load cat working");
+		try {
+			stmt = conn.createStatement();
+			
+			String sql = "SELECT name FROM menu WHERE category = '"+category+"'";
+			
+			rs = stmt.executeQuery(sql);
+			
+			while(rs.next()) {
+				
+				String bev = rs.getString("name");
+				
+				comb.addItem(bev);
+				
+			}
+			
+			//System.out.println(");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	 
+	
+	 public void DessertJComboBoxItemStateChanged (ItemEvent event) {
+		 
+		 
+		 if (event.getStateChange() == ItemEvent.SELECTED)
+         {
+			 
+			  
+			String s = (String)event.getItem();
+			 
+	         BillItem.add(s);
+		              System.out.println("items in arraylist are"+BillItem);
+		      }   
+		   
+	 }
+         
+		 private void MainCourseJComboBoxItemStateChanged(ItemEvent event )   
+			   {   
+			      // select an item   
+			      if ( event.getStateChange() == ItemEvent.SELECTED )   
+			      {   
+			        
+			    	  String s = (String)event.getItem();
+						 
+				         BillItem1.add(s);
+					              System.out.println("items in arraylist are"+BillItem1);
+					      }   
+					   
+			   }
+		 private void AppetizerJComboBoxItemStateChanged(ItemEvent event ) {
+			 if ( event.getStateChange() == ItemEvent.SELECTED )   
+		      {   
+		        
+		    	  String s = (String)event.getItem();
+					 
+			         BillItem2.add(s);
+				              System.out.println("items in arraylist are"+BillItem2);
+				      }   
+		 }
+
+		 
+		 private void BeverageJComboBoxItemStateChanged(ItemEvent event ) {
+			 if ( event.getStateChange() == ItemEvent.SELECTED )   
+		      {   
+		        
+		    	  String s = (String)event.getItem();
+					 
+			         BillItem3.add(s);
+				              System.out.println("items in arraylist are"+BillItem3);
+         }	
+		 }    
+			
+		 private void displayTotal(double Total) {
+			 DecimalFormat dollars = new DecimalFormat("$0.00");
+			 
+			 jtf9.setText(dollars.format(Total));
+			 
+			 // calculating Tax
+			 
+			 double Tax = Total * TAX_RATE;
+			 jtf10.setText(dollars.format(Tax));
+		 }
+			 
+		 
+public  <object> void calculateSubtotal(){
+	
+	double SubTotal = 0;
+	double Total = SubTotal;
+	object[]items = (object[]) BillItem.toArray();
+	
+try{
+
+//looping through an array
+
+for(int i = 0; i < items.length; i++){
+
+//taking the results of an sql statement and storing it in a resultSet 
+
+	rs = stmt.executeQuery("SELECT price From Menu WHERE name = ' " + (String) items[i] + " '" );
+	while(rs.next()){
+		
+		Total +=rs.getLong("price");
+		
+		System.out.println("total is " + Total);
+	}
+	}
+}catch(Exception e){ 
+	
+}
+
